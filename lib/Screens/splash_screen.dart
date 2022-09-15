@@ -1,12 +1,11 @@
 import 'dart:convert' as convert;
 import 'package:flutter/material.dart';
 import 'package:information_app/Screens/home_screen.dart';
-import 'package:information_app/utensils/assets_data.dart';
-import 'package:information_app/utensils/constants.dart' as constants;
+import 'package:information_app/utensils/ui_parts.dart';
 import 'package:information_app/utensils/local_files.dart';
+import 'package:information_app/utensils/assets_data.dart';
 import 'package:information_app/utensils/online_json_data.dart';
-
-//TODO: Add Animation of loading
+import 'package:information_app/utensils/constants.dart' as constants;
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -17,6 +16,10 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   late bool isLoaded;
+  late String question;
+  late String option1;
+  late String option2;
+  late Map<String, dynamic> data;
 
   @override
   void initState() {
@@ -39,8 +42,6 @@ class _SplashScreenState extends State<SplashScreen> {
       return;
     }
 
-    updateVersion(onlineJsonData.version);
-
     Map<String, bool> versions = await checkVersions();
     if (versions[constants.KEYS.version] == true) {
       updateData(await onlineJsonData.data);
@@ -54,9 +55,15 @@ class _SplashScreenState extends State<SplashScreen> {
       updateImageJson(newjson);
     }
 
-    //TODO : Implement app update popup
+    updateVersion(onlineJsonData.version);
+
+    if (versions[constants.KEYS.update] == true) showUpdateAppPopUp();
 
     loadData();
+  }
+
+  void showUpdateAppPopUp() {
+    //TODO : Implement app update popup
   }
 
   Future<Map<String, bool>> checkVersions() async {
@@ -102,66 +109,46 @@ class _SplashScreenState extends State<SplashScreen> {
     question = "question";
     option1 = "yes";
     option2 = "no";
+    data = convert.jsonDecode(await localFiles.dataJson.getJson);
     setState(() {
       isLoaded = true;
     });
   }
 
-  void loadNextScreen(String option) async {
+  void loadNextScreen(String option) {
     if (option == option1) {
-      Map<String, dynamic> data =
-          convert.jsonDecode(await localFiles.dataJson.getJson);
-      // TODO: Implement something for no
-
-      // ignore: use_build_context_synchronously
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
         return HomeScreen(data: data);
       }));
+      return;
     }
+    // TODO: Implement something for option2
   }
-
-  late String question;
-  late String option1;
-  late String option2;
 
   @override
   Widget build(BuildContext context) {
     if (isLoaded) {
-      return displayQuestion();
+      //TODO: Add Animation of loading
+      return const Scaffold(
+        body: Center(
+          child: Text("Updating"),
+        ),
+      );
     }
-    return const Scaffold(
-      body: Center(
-        child: Text("Updating"),
-      ),
-    );
-  }
 
-  Scaffold displayQuestion() {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(constants.appTITLE),
-      ),
+      appBar: AppBar(title: const Text(constants.appTITLE)),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text(question),
-          const SizedBox(
-            height: 20,
-          ),
+          Text(question.toTitle()),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              ElevatedButton(
-                  onPressed: () {
-                    loadNextScreen(option1);
-                  },
-                  child: Text(option1)),
-              const SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    loadNextScreen(option2);
-                  },
-                  child: Text(option2)),
+              UIParts.partProblemButton(
+                  action: () => loadNextScreen(option1), text: option1),
+              UIParts.partProblemButton(
+                  action: () => loadNextScreen(option2), text: option2),
             ],
           ),
         ],
