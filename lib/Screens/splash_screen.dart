@@ -108,7 +108,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void loadNextScreen(String option) async {
-    if (option == "yes") {
+    if (option == option1) {
       Map<String, dynamic> data =
           convert.jsonDecode(await localFiles.dataJson.getJson);
       // TODO: Implement something for no
