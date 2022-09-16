@@ -1,5 +1,6 @@
 import 'dart:convert' as convert;
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:information_app/Screens/home_screen.dart';
 import 'package:information_app/utensils/ui_parts.dart';
 import 'package:information_app/utensils/local_files.dart';
@@ -15,15 +16,16 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  late bool isLoaded;
-  late String question;
-  late String option1;
-  late String option2;
+  bool isLoading = true;
+  bool isInitialSetup = false;
+  bool isUpdating = false;
+  final question = "question";
+  final option1 = "yes";
+  final option2 = "no";
   late Map<String, dynamic> data;
 
   @override
   void initState() {
-    isLoaded = false;
     super.initState();
     initialize();
   }
@@ -33,6 +35,11 @@ class _SplashScreenState extends State<SplashScreen> {
     await onlineJsonData.setup();
 
     if (!localFiles.isFilesExisted) {
+      setState(() {
+        isLoading = false;
+        isUpdating = false;
+        isInitialSetup = true;
+      });
       createData();
       return;
     }
@@ -41,6 +48,11 @@ class _SplashScreenState extends State<SplashScreen> {
       loadData();
       return;
     }
+    setState(() {
+      isLoading = false;
+      isUpdating = true;
+      isInitialSetup = false;
+    });
 
     Map<String, bool> versions = await checkVersions();
     if (versions[KEYS.version] == true) {
@@ -113,12 +125,11 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void loadData() async {
-    question = "question";
-    option1 = "yes";
-    option2 = "no";
     data = convert.jsonDecode(await localFiles.dataJson.getJson);
     setState(() {
-      isLoaded = true;
+      isLoading = false;
+      isUpdating = false;
+      isInitialSetup = false;
     });
   }
 
@@ -132,13 +143,26 @@ class _SplashScreenState extends State<SplashScreen> {
     // TODO: Implement something for option2
   }
 
+  Text get animationStateText {
+    String text = "donee";
+    if (isLoading) text = "Loading";
+    if (isUpdating) text = "Updating";
+    if (isInitialSetup) text = "InitialSetup";
+    return Text(text);
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (!isLoaded) {
-      //TODO: Add Animation of loading
-      return const Scaffold(
-        body: Center(
-          child: Text("Updating"),
+    if (isLoading || isUpdating || isInitialSetup) {
+      return Scaffold(
+        body: Stack(
+          children: [
+            Center(child: animationStateText),
+            const SpinKitCircle(
+              color: Colors.blueGrey,
+              size: 150.0,
+            )
+          ],
         ),
       );
     }

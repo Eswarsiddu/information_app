@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     Wakelock.enable();
     return const MaterialApp(
       title: Constants.appTITLE,
-      home: SplashScreen(),
+      home:   SplashScreen(),
     );
   }
 }
