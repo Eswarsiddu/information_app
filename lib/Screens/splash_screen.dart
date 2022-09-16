@@ -5,7 +5,7 @@ import 'package:information_app/utensils/ui_parts.dart';
 import 'package:information_app/utensils/local_files.dart';
 import 'package:information_app/utensils/assets_data.dart';
 import 'package:information_app/utensils/online_json_data.dart';
-import 'package:information_app/utensils/constants.dart' as constants;
+import 'package:information_app/utensils/constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -43,11 +43,11 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     Map<String, bool> versions = await checkVersions();
-    if (versions[constants.KEYS.version] == true) {
+    if (versions[KEYS.version] == true) {
       updateData(await onlineJsonData.data);
     }
 
-    if (versions[constants.KEYS.images] == true) {
+    if (versions[KEYS.images] == true) {
       String newjson = await onlineJsonData.images;
       localFiles.imageManager.updateImages(
           newJson: convert.jsonDecode(newjson),
@@ -57,13 +57,24 @@ class _SplashScreenState extends State<SplashScreen> {
 
     updateVersion(onlineJsonData.version);
 
-    if (versions[constants.KEYS.update] == true) showUpdateAppPopUp();
+    if (versions[KEYS.update] == true) showUpdateAppPopUp();
 
     loadData();
   }
 
   void showUpdateAppPopUp() {
-    //TODO : Implement app update popup
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const Text("App update"),
+              content:
+                  const Text("Please update to the latest app in playstore"),
+              actions: [
+                ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text("okay"))
+              ],
+            ));
   }
 
   Future<Map<String, bool>> checkVersions() async {
@@ -72,11 +83,7 @@ class _SplashScreenState extends State<SplashScreen> {
         convert.jsonDecode(onlineJsonData.version);
     Map<String, dynamic> localDataVersion =
         convert.jsonDecode(await localFiles.versionJson.getJson);
-    for (var key in [
-      constants.KEYS.version,
-      constants.KEYS.update,
-      constants.KEYS.images
-    ]) {
+    for (var key in [KEYS.version, KEYS.update, KEYS.images]) {
       versions[key] = onlineDataVersion[key] > localDataVersion[key];
     }
 
@@ -127,7 +134,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoaded) {
+    if (!isLoaded) {
       //TODO: Add Animation of loading
       return const Scaffold(
         body: Center(
@@ -137,11 +144,11 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text(constants.appTITLE)),
+      appBar: AppBar(title: const Text(Constants.appTITLE)),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Text(question.toTitle()),
+          Text(question),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [

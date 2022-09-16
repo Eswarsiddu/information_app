@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:information_app/Screens/problem_selected_screen.dart';
+import 'package:information_app/utensils/ui_parts.dart';
 
 class PartSelected extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -17,21 +18,20 @@ class PartSelected extends StatelessWidget {
         ),
         title: Center(child: Text(part)),
       ),
-      body: Center(
-        child: Wrap(
-          children: List.generate(keys.length, (index) {
-            String problem = keys[index];
-            return ElevatedButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return ProblemSelected(
-                      data: data[problem], problem: problem, part: part);
-                }));
-              },
-              child: Text(problem),
-            );
-          }),
-        ),
+      body: Wrap(
+        runAlignment: WrapAlignment.spaceEvenly,
+        children: List.generate(keys.length, (index) {
+          String problem = keys[index];
+          return UIParts.partProblemButton(
+            text: problem,
+            action: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ProblemSelected(
+                      data: data[problem], problem: problem, part: part)),
+            ),
+          );
+        }),
       ),
     );
   }

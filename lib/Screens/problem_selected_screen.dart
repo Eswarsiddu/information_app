@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:information_app/utensils/constants.dart';
 import 'package:information_app/utensils/local_files.dart';
+import 'package:information_app/utensils/constants.dart';
 
 class ProblemSelected extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -13,29 +13,24 @@ class ProblemSelected extends StatelessWidget {
       required this.part});
 
   List<Widget> buildImages() {
-    List<Widget> view = [];
-    if (!data.containsKey(KEYS.images)) return view;
-    double imgSize = 150;
-    view.add(getHeading("Refernce Images"));
-    List<Widget> wrap = [];
-    for (String name in data[KEYS.images]) {
-      wrap.add(
-        Image.file(
-          localFiles.imageManager.getImage(
-            part: part,
-            problem: problem,
-            name: name,
+    return [
+      data.containsKey(KEYS.images)
+          ? getHeading("Refernce Images")
+          : const SizedBox(),
+      Wrap(
+        spacing: 10,
+        runAlignment: WrapAlignment.spaceEvenly,
+        children: List.generate(
+          data.containsKey(KEYS.images) ? data[KEYS.images].length : 0,
+          (index) => Image.file(
+            localFiles.imageManager.getImage(
+                part: part, problem: problem, name: data[KEYS.images][index]),
+            width: Constants.imgSize,
+            height: Constants.imgSize,
           ),
-          width: imgSize,
-          height: imgSize,
         ),
-      );
-    }
-    view.add(Wrap(
-      spacing: 10,
-      children: wrap,
-    ));
-    return view;
+      ),
+    ];
   }
 
   @override

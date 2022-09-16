@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:information_app/utensils/constants.dart' as constants;
+import 'package:information_app/utensils/constants.dart';
 import 'package:information_app/Screens/part_selected_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -11,10 +11,11 @@ class HomeScreen extends StatelessWidget {
     List<String> keys = data.keys.toList();
     return Scaffold(
       appBar: AppBar(
-        title: const Text(constants.appTITLE),
+        title: const Text(Constants.appTITLE),
       ),
       body: Center(
         child: Wrap(
+          runAlignment: WrapAlignment.spaceEvenly,
           children: List.generate(
             keys.length,
             (index) {
