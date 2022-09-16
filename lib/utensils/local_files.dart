@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:information_app/utensils/assets_data.dart';
 import 'package:information_app/utensils/constants.dart';
 import 'package:information_app/utensils/download_data.dart';
-import 'package:path_provider/path_provider.dart';
 
 class _JsonFile {
   late File _file;

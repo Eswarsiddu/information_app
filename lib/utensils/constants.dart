@@ -1,5 +1,8 @@
-const appTITLE = "Information";
-const onlineTimeOut = 5;
+class Constants {
+  static const appTITLE = "Information";
+  static const onlineTimeOut = 5;
+  static const imgSize = 150.0;
+}
 
 class KEYS {
   static const version = "version";
@@ -11,8 +14,3 @@ class KEYS {
   static const data = "data";
 }
 
-extension StringExtention on String {
-  String toTitle() {
-    return this[0].toUpperCase() + substring(1).toLowerCase();
-  }
-}

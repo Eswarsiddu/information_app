@@ -8,8 +8,7 @@ class _OnlineJsonData {
   final _imagesJsonUrl = "JsonData/Images.json";
 
   late String _versionJson;
-  String _imagesJson = "";
-  String _dataJson = "";
+  late String _imagesJson;
 
   late bool _connected;
   late bool _downloaded;
@@ -17,19 +16,10 @@ class _OnlineJsonData {
   bool get isConnected => _connected && _downloaded && !downloadData.timeOut;
 
   String get version => _versionJson;
-  Future<String> get data async {
-    if (_dataJson.isEmpty) {
-      _dataJson = await downloadData.getJsonOnline(_dataJsonUrl);
-    }
-    return _dataJson;
-  }
 
-  Future<String> get images async {
-    if (_imagesJson.isEmpty) {
-      _imagesJson = await downloadData.getJsonOnline(_imagesJsonUrl);
-    }
-    return _imagesJson;
-  }
+  Future<String> get data async =>await downloadData.getJsonOnline(_dataJsonUrl);  
+  
+  Future<String> get images async => _imagesJson;
 
   Future<void> setup() async {
     _connected = false;
@@ -43,17 +33,17 @@ class _OnlineJsonData {
           connectionStatus == ConnectivityResult.ethernet) _connected = true;
     } on PlatformException catch (_) {}
 
-    if (!_connected) return;
+    if (!isConnected) return;
 
     _versionJson = await downloadData.getJsonOnline(_versionJsonUrl);
+
+    if (_versionJson.isEmpty || _versionJson == "{}") _downloaded = false;
+
+    if (!isConnected) return;
+
     _imagesJson = await downloadData.getJsonOnline(_imagesJsonUrl);
 
-    if (_versionJson.isEmpty ||
-        _versionJson == "{}" ||
-        _imagesJson.isEmpty ||
-        _imagesJson == "{}") {
-      _downloaded = false;
-    }
+    if (_imagesJson.isEmpty || _imagesJson == "{}") _downloaded = false;
   }
 }
 
